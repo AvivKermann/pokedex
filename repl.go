@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 )
 
 func startRepl() {
@@ -12,21 +13,31 @@ func startRepl() {
 	for {
 		fmt.Printf("pokedex> ")
 		usrInput.Scan()
-		if usrInput.Text() == "exit" {
-			commandExit()	
+		inputLower := strings.ToLower(usrInput.Text()) 
+		command, exist := getCliCommands()[inputLower]
+		if !exist {
+			fmt.Println("Unkown command")
+			continue
 		}
-		if usrInput.Text() == "help" {
-			commandHelp()
+		fmt.Println()
+		err := command.callback()
+		if err != nil {
+			fmt.Println(err)
 		}
-
+		continue
+		}
 	}
-}
 
 type cliCommand struct {
 	
 	name string
 	description string
 	callback func() error
+}
+
+type Config struct {
+	next *string
+	prev *string
 }
 
 func getCliCommands() map[string]cliCommand {
@@ -41,8 +52,17 @@ func getCliCommands() map[string]cliCommand {
 			description : "Exits the program",
 			callback : commandExit,
 		},
+		"map" : {
+			name: "map",
+			description : "Displys the next 20 locations",
+			callback : commandMap,
+		},
+		"mapb" : {
+			name: "mapb",
+			description : "Displys the previous 20 locations",
+			callback : commandMapb,
+		},
+
 	}
 
 }
-
-
