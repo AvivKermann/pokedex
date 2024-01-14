@@ -57,12 +57,6 @@ func getCliCommands() map[string]cliCommand {
 			description : "Displys the next 20 locations",
 			callback : commandMap,
 		},
-		"mapb" : {
-			name: "mapb",
-			description : "Displys the previous 20 locations",
-			callback : commandMapb,
-		},
-
 	}
 
 }
