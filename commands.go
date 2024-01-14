@@ -49,7 +49,7 @@ func commandMap(cfg *Config) error{
 
 func commandMapb(cfg *Config) error {
 	if cfg.prev == nil {
-		return errors.New("cannot go back on page one")
+		return errors.New("already on page one")
 	}
 	defultURL := *cfg.prev
 	resp, err := api.GetLocationAreas(defultURL)

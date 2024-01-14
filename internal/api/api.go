@@ -15,10 +15,9 @@ var cache pokecache.Cache = pokecache.NewCache(interval)
 
 func GetLocationAreas(defultURL string)  (LocationResultStruct, error) {
 
-cacheResp, exists := cache.Get(defultURL)
+cacheResp, cacheExists := cache.Get(defultURL)
 
-if exists {
-
+if cacheExists {
 	result := LocationResultStruct{}
 	er := json.Unmarshal(cacheResp, &result)
 
