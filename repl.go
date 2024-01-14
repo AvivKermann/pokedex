@@ -14,12 +14,18 @@ func startRepl() {
 	for {
 		fmt.Printf("pokedex> ")
 		usrInput.Scan()
-		
 		inputLower := strings.ToLower(usrInput.Text())
-		inputCommand := strings.Fields(inputLower)[0]
-		locName := &inputCommand
-		// inputArgs := strings.Fields(inputLower)[1]
+		fields := strings.Fields(inputLower)
+		var locName string
+
+		if len(fields) < 1 {
+			continue
+		}
+		inputCommand := fields[0]
 		
+		if len(fields) == 2{
+			locName = fields[1]
+		}	
 
 		command, exist := getCliCommands()[inputCommand]
 		if !exist {
@@ -39,7 +45,7 @@ type cliCommand struct {
 	
 	name string
 	description string
-	callback func(cfg *Config, locName *string) error
+	callback func(cfg *Config, locName string) error
 }
 
 type Config struct {
@@ -68,6 +74,11 @@ func getCliCommands() map[string]cliCommand {
 			name : "mapb",
 			description: "Displays the previous 20 locations",
 			callback: commandMapb,
+		},
+		"explore" : {
+			name: "explore",
+			description: "Explores a certain area in pokemon",
+			callback: commandExplore,
 		},
 	}
 

@@ -7,6 +7,7 @@ import(
 	"encoding/json"
 	"github.com/AvivKermann/pokedex/internal/pokecache"
 	"time"
+	"errors"
 )
 
 const interval = time.Minute * 5
@@ -66,6 +67,22 @@ return result, nil
 	baseURL := "https://pokeapi.co/api/v2/location-area/"
 	fullURL := baseURL + name
 
+	cacheResp, cacheExists := cache.Get(fullURL)
+
+	if cacheExists {
+	result := LocationResultStruct{}
+	er := json.Unmarshal(cacheResp, &result)
+
+	if er != nil {
+		fmt.Println(er)
+	}
+	return LocationAreaPokemonResponse{}, er
+	}
+
+
+	if len(name) <= 0 {
+		return LocationAreaPokemonResponse{}, errors.New("length of location cannot be zero")
+	}
 	res, err := http.Get(fullURL)
 	if res.StatusCode > 399 {
 		fmt.Printf("Error status code : %v\n", res.StatusCode)
