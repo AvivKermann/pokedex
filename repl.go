@@ -14,14 +14,20 @@ func startRepl() {
 	for {
 		fmt.Printf("pokedex> ")
 		usrInput.Scan()
-		inputLower := strings.ToLower(usrInput.Text()) 
-		command, exist := getCliCommands()[inputLower]
+		
+		inputLower := strings.ToLower(usrInput.Text())
+		inputCommand := strings.Fields(inputLower)[0]
+		locName := &inputCommand
+		// inputArgs := strings.Fields(inputLower)[1]
+		
+
+		command, exist := getCliCommands()[inputCommand]
 		if !exist {
 			fmt.Println("Unkown command")
 			continue
 		}
 		fmt.Println()
-		err := command.callback(cfg)
+		err := command.callback(cfg, locName)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -33,7 +39,7 @@ type cliCommand struct {
 	
 	name string
 	description string
-	callback func(cfg *Config) error
+	callback func(cfg *Config, locName *string) error
 }
 
 type Config struct {

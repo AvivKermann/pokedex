@@ -7,7 +7,7 @@ import (
 	"github.com/AvivKermann/pokedex/internal/api"
 )
 
-func commandHelp(cfg *Config) error{
+func commandHelp(cfg *Config, locName *string) error{
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Println("Usage:")
 	fmt.Println()
@@ -19,14 +19,14 @@ func commandHelp(cfg *Config) error{
 	return nil
 }
 
-func commandExit(cfg *Config) error{
+func commandExit(cfg *Config, locName *string) error{
 	fmt.Println("Thanks for using my pokedex!")
 	os.Exit(0)
 	return nil
 }
 
-func commandMap(cfg *Config) error{
-	defultURL := "https://pokeapi.co/api/v2/location/"
+func commandMap(cfg *Config, locName *string) error{
+	defultURL := "https://pokeapi.co/api/v2/location-area/"
 		
 	if cfg.next != nil {
 		defultURL = *cfg.next
@@ -47,7 +47,7 @@ func commandMap(cfg *Config) error{
 	return nil
 }
 
-func commandMapb(cfg *Config) error {
+func commandMapb(cfg *Config, locName *string) error {
 	if cfg.prev == nil {
 		return errors.New("already on page one")
 	}
