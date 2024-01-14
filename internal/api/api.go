@@ -5,11 +5,10 @@ import(
 	"io"
 	"net/http"
 	"encoding/json"
+	
 )
 
-func GetLocationAreas()  (LocationResultStruct, error) {
-
-defultURL := "https://pokeapi.co/api/v2/location/"
+func GetLocationAreas(defultURL string)  (LocationResultStruct, error) {
 
 res, err := http.Get(defultURL)
 if res.StatusCode > 399 {
