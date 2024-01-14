@@ -1,10 +1,10 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"github.com/AvivKermann/pokedex/internal/api"
-	"errors"
 )
 
 func commandHelp(cfg *Config) error{
@@ -27,7 +27,7 @@ func commandExit(cfg *Config) error{
 
 func commandMap(cfg *Config) error{
 	defultURL := "https://pokeapi.co/api/v2/location/"
-	
+		
 	if cfg.next != nil {
 		defultURL = *cfg.next
 	}
@@ -40,15 +40,11 @@ func commandMap(cfg *Config) error{
 	if err != nil {
 		return err
 	}
-	
-
 
 	for _, name := range resp.Results {
 		fmt.Println(name.Name)
 	}
 	return nil
-
-	
 }
 
 func commandMapb(cfg *Config) error {

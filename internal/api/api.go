@@ -5,10 +5,29 @@ import(
 	"io"
 	"net/http"
 	"encoding/json"
-	
+	"github.com/AvivKermann/pokedex/internal/pokecache"
+	"time"
 )
 
+const interval = time.Minute * 5
+var cache pokecache.Cache = pokecache.NewCache(interval)
+
+
 func GetLocationAreas(defultURL string)  (LocationResultStruct, error) {
+
+cacheResp, exists := cache.Get(defultURL)
+
+if exists {
+
+	result := LocationResultStruct{}
+	er := json.Unmarshal(cacheResp, &result)
+
+	if er != nil {
+		fmt.Println(er)
+	}
+
+	return result, nil
+}
 
 res, err := http.Get(defultURL)
 if res.StatusCode > 399 {
@@ -22,8 +41,14 @@ if err != nil {
 
 }
 
-defer res.Body.Close()
 body, _ := io.ReadAll(res.Body)
+defer res.Body.Close()
+
+cacheError := cache.Add(defultURL, body)
+if cacheError != nil {
+	fmt.Println(cacheError)
+}
+
 result := LocationResultStruct{} 
 er := json.Unmarshal(body, &result)
 
