@@ -4,10 +4,11 @@ import (
 	"errors"
 	"fmt"
 	"os"
+
 	"github.com/AvivKermann/pokedex/internal/api"
 )
 
-func commandHelp(cfg *Config, locName string) error{
+func commandHelp(cfg *Config, locName string) error {
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Println("Usage:")
 	fmt.Println()
@@ -19,21 +20,21 @@ func commandHelp(cfg *Config, locName string) error{
 	return nil
 }
 
-func commandExit(cfg *Config, locName string) error{
+func commandExit(cfg *Config, locName string) error {
 	fmt.Println("Thanks for using my pokedex!")
 	os.Exit(0)
 	return nil
 }
 
-func commandMap(cfg *Config, locName string) error{
+func commandMap(cfg *Config, locName string) error {
 	defultURL := "https://pokeapi.co/api/v2/location-area/"
-		
+
 	if cfg.next != nil {
 		defultURL = *cfg.next
 	}
 
 	resp, err := api.GetLocationAreas(defultURL)
-	
+
 	cfg.next = resp.Next
 	cfg.prev = resp.Previous
 
@@ -72,10 +73,10 @@ func commandExplore(cfg *Config, locName string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Exploring %v",locName)
+	fmt.Printf("Exploring %v", locName)
 	for _, name := range resp.PokemonEncounters {
 		fmt.Println(name.Pokemon.Name)
-		
+
 	}
 	return nil
 

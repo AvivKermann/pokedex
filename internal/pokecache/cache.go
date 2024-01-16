@@ -5,27 +5,27 @@ import (
 	"sync"
 	"time"
 )
+
 type cacheEntry struct {
-	createdAt  time.Time
-	val []byte
+	createdAt time.Time
+	val       []byte
 }
 
 type Cache struct {
-	mu sync.Mutex
+	mu      sync.Mutex
 	entries map[string]cacheEntry
-	
 }
 
 func NewCache(interval time.Duration) Cache {
 	c := Cache{
-		entries : make(map[string]cacheEntry),
+		entries: make(map[string]cacheEntry),
 	}
 	go c.reapLoop(interval)
 	return c
 
 }
 
-func (c *Cache) Add (key string, val []byte) error {
+func (c *Cache) Add(key string, val []byte) error {
 
 	if len(key) <= 0 {
 		return errors.New("empty key is not allowed")
@@ -34,9 +34,9 @@ func (c *Cache) Add (key string, val []byte) error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	entry := cacheEntry {
+	entry := cacheEntry{
 		createdAt: time.Now().UTC(),
-		val : val,
+		val:       val,
 	}
 	c.entries[key] = entry
 
@@ -44,14 +44,14 @@ func (c *Cache) Add (key string, val []byte) error {
 
 }
 
-func (c *Cache) Get (key string) ([]byte , bool) {
+func (c *Cache) Get(key string) ([]byte, bool) {
 
 	if len(key) <= 0 {
 		return nil, false
 	}
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	
+
 	entry, exist := c.entries[key]
 
 	if !exist {
@@ -61,8 +61,7 @@ func (c *Cache) Get (key string) ([]byte , bool) {
 	return entry.val, exist
 }
 
-
-func (c *Cache) reapLoop (interval time.Duration) {
+func (c *Cache) reapLoop(interval time.Duration) {
 
 	ticker := time.NewTicker(interval)
 	for range ticker.C {
@@ -70,13 +69,13 @@ func (c *Cache) reapLoop (interval time.Duration) {
 	}
 }
 
-func (c *Cache) reap (interval time.Duration) {
+func (c *Cache) reap(interval time.Duration) {
 
 	deletionTime := time.Now().UTC().Add(-interval)
 	for key, value := range c.entries {
 
 		if value.createdAt.Before(deletionTime) {
 			delete(c.entries, key)
+		}
 	}
-  }
 }

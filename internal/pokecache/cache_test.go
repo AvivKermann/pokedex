@@ -33,8 +33,7 @@ func TestReap(t *testing.T) {
 
 	cache.Add("key1", []byte("val1"))
 	time.Sleep(interval / 2)
-	
-	
+
 	_, ok := cache.Get("key1")
 
 	if ok {
