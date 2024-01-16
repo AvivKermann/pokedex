@@ -9,12 +9,12 @@ import (
 
 type UserPokedex struct {
 	mu       sync.Mutex
-	pokemons map[string]api.Pokemon
+	Pokemons map[string]api.Pokemon
 }
 
 func InitUserPokedex() UserPokedex {
 	return UserPokedex{
-		pokemons: make(map[string]api.Pokemon),
+		Pokemons: make(map[string]api.Pokemon),
 	}
 }
 
@@ -26,7 +26,18 @@ func (up *UserPokedex) Catch(name string, pokeData api.Pokemon) error {
 		return errors.New("empty key is not allowed")
 	}
 
-	up.pokemons[name] = pokeData
+	up.Pokemons[name] = pokeData
 	return nil
+
+}
+
+func (up *UserPokedex) Get(name string) (api.Pokemon, error) {
+	pokemon, exists := up.Pokemons[name]
+
+	if !exists {
+		return api.Pokemon{}, errors.New("pokemon hasn't been captured")
+	}
+
+	return pokemon, nil
 
 }

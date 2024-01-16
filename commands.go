@@ -99,6 +99,7 @@ func commandCatch(cfg *Config, locName string) error {
 
 	if userNum == randomNum {
 		fmt.Printf("%v Captured\n", locName)
+		fmt.Println("You may now inspect it with the inspect command")
 		err := userPokedex.Catch(locName, pokemon)
 		if err != nil {
 			return fmt.Errorf("cannot catch %s error: %v", locName, err)
@@ -109,4 +110,36 @@ func commandCatch(cfg *Config, locName string) error {
 	fmt.Printf("%v, Escaped\n", locName)
 	return nil
 
+}
+func commandInspact(cfg *Config, locName string) error {
+	pokemon, exists := userPokedex.Get(locName)
+
+	if exists != nil {
+		return exists
+	}
+	fmt.Printf("Name: %s\n", locName)
+	fmt.Printf("Height: %v\n", pokemon.Height)
+	fmt.Printf("Weight: %v\n", pokemon.Weight)
+	fmt.Println("Stats:")
+	for _, obj := range pokemon.Stats {
+		fmt.Printf(" -%v: %v\n", obj.Stat.Name, obj.BaseStat)
+	}
+	fmt.Println("Types:")
+	for _, types := range pokemon.Types {
+		fmt.Printf(" -%s\n", types.Type.Name)
+	}
+
+	return nil
+
+}
+func commandPokedex(cfg *Config, locName string) error {
+	if len(userPokedex.Pokemons) == 0 {
+		fmt.Println("Your Pokedex is empty")
+		return nil
+	}
+	fmt.Println("Your Pokedex: ")
+	for _, pokemonName := range userPokedex.Pokemons {
+		fmt.Printf("- %s\n", pokemonName.Name)
+	}
+	return nil
 }
