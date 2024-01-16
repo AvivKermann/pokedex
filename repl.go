@@ -5,10 +5,15 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/AvivKermann/pokedex/internal/userpokedex"
 )
+
+var userPokedex userpokedex.UserPokedex = userpokedex.InitUserPokedex()
 
 func startRepl() {
 	usrInput := bufio.NewScanner(os.Stdin)
+
 	cfg := &Config{}
 	for {
 		fmt.Printf("pokedex> ")
@@ -74,9 +79,14 @@ func getCliCommands() map[string]cliCommand {
 			callback:    commandMapb,
 		},
 		"explore": {
-			name:        "explore",
+			name:        "explore {location name}",
 			description: "Explores a certain area in pokemon",
 			callback:    commandExplore,
+		},
+		"catch": {
+			name:        "catch {pokemon name}",
+			description: "Tries to catch a certain pokemon",
+			callback:    commandCatch,
 		},
 	}
 

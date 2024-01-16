@@ -3,7 +3,9 @@ package main
 import (
 	"errors"
 	"fmt"
+	"math/rand"
 	"os"
+	"time"
 
 	"github.com/AvivKermann/pokedex/internal/api"
 )
@@ -78,6 +80,33 @@ func commandExplore(cfg *Config, locName string) error {
 		fmt.Println(name.Pokemon.Name)
 
 	}
+	return nil
+
+}
+
+func commandCatch(cfg *Config, locName string) error {
+	pokemon, baseExperience, err := api.GetPokemonInfo(locName)
+
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Trying to capture %v\n", locName)
+
+	randRange := int(baseExperience / 30)
+	userNum, randomNum := rand.Intn(randRange), rand.Intn(randRange)
+	time.Sleep(time.Millisecond * 400)
+
+	if userNum == randomNum {
+		fmt.Printf("%v Captured\n", locName)
+		err := userPokedex.Catch(locName, pokemon)
+		if err != nil {
+			return fmt.Errorf("cannot catch %s error: %v", locName, err)
+		}
+
+		return nil
+	}
+	fmt.Printf("%v, Escaped\n", locName)
 	return nil
 
 }
