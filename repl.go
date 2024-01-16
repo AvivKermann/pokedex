@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	
 )
 
 func startRepl() {
@@ -22,10 +21,10 @@ func startRepl() {
 			continue
 		}
 		inputCommand := fields[0]
-		
-		if len(fields) == 2{
+
+		if len(fields) == 2 {
 			locName = fields[1]
-		}	
+		}
 
 		command, exist := getCliCommands()[inputCommand]
 		if !exist {
@@ -38,14 +37,13 @@ func startRepl() {
 			fmt.Println(err)
 		}
 		continue
-		}
 	}
+}
 
 type cliCommand struct {
-	
-	name string
+	name        string
 	description string
-	callback func(cfg *Config, locName string) error
+	callback    func(cfg *Config, locName string) error
 }
 
 type Config struct {
@@ -55,30 +53,30 @@ type Config struct {
 
 func getCliCommands() map[string]cliCommand {
 	return map[string]cliCommand{
-		"help" : {
-			name : "help",
+		"help": {
+			name:        "help",
 			description: "Displays a help message",
-			callback : commandHelp,
+			callback:    commandHelp,
 		},
-		"exit" : {
-			name : "help",
-			description : "Exits the program",
-			callback : commandExit,
+		"exit": {
+			name:        "help",
+			description: "Exits the program",
+			callback:    commandExit,
 		},
-		"map" : {
-			name: "map",
-			description : "Displys the next 20 locations",
-			callback : commandMap,
+		"map": {
+			name:        "map",
+			description: "Displys the next 20 locations",
+			callback:    commandMap,
 		},
-		"mapb" : {
-			name : "mapb",
+		"mapb": {
+			name:        "mapb",
 			description: "Displays the previous 20 locations",
-			callback: commandMapb,
+			callback:    commandMapb,
 		},
-		"explore" : {
-			name: "explore",
+		"explore": {
+			name:        "explore",
 			description: "Explores a certain area in pokemon",
-			callback: commandExplore,
+			callback:    commandExplore,
 		},
 	}
 

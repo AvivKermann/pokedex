@@ -1,84 +1,81 @@
 package api
 
-import(
+import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
-	"encoding/json"
-	"github.com/AvivKermann/pokedex/internal/pokecache"
 	"time"
-	"errors"
+
+	"github.com/AvivKermann/pokedex/internal/pokecache"
 )
 
 const interval = time.Minute * 5
+
 var cache pokecache.Cache = pokecache.NewCache(interval)
 
+func GetLocationAreas(defultURL string) (LocationResultStruct, error) {
 
-func GetLocationAreas(defultURL string)  (LocationResultStruct, error) {
+	cacheResp, cacheExists := cache.Get(defultURL)
 
-cacheResp, cacheExists := cache.Get(defultURL)
+	if cacheExists {
+		result := LocationResultStruct{}
+		er := json.Unmarshal(cacheResp, &result)
 
-if cacheExists {
+		if er != nil {
+			fmt.Println(er)
+		}
+
+		return result, nil
+	}
+
+	res, err := http.Get(defultURL)
+	if res.StatusCode > 399 {
+		fmt.Printf("Error status code : %v\n", res.StatusCode)
+		return LocationResultStruct{}, err
+	}
+
+	if err != nil {
+		fmt.Println(err)
+		return LocationResultStruct{}, err
+
+	}
+
+	body, _ := io.ReadAll(res.Body)
+	defer res.Body.Close()
+
+	cacheError := cache.Add(defultURL, body)
+	if cacheError != nil {
+		fmt.Println(cacheError)
+	}
+
 	result := LocationResultStruct{}
-	er := json.Unmarshal(cacheResp, &result)
+	er := json.Unmarshal(body, &result)
 
 	if er != nil {
 		fmt.Println(er)
+		return LocationResultStruct{}, err
 	}
 
 	return result, nil
 }
 
-res, err := http.Get(defultURL)
-if res.StatusCode > 399 {
-	fmt.Printf("Error status code : %v\n", res.StatusCode)
-	return LocationResultStruct{}, err
-}
-
-if err != nil {
-	fmt.Println(err)
-	return LocationResultStruct{}, err
-
-}
-
-body, _ := io.ReadAll(res.Body)
-defer res.Body.Close()
-
-cacheError := cache.Add(defultURL, body)
-if cacheError != nil {
-	fmt.Println(cacheError)
-}
-
-result := LocationResultStruct{} 
-er := json.Unmarshal(body, &result)
-
-if er != nil {
-	fmt.Println(er)
-	return LocationResultStruct{}, err
-}
-
-return result, nil
-}
-
-
-
-
- func GetLocationAreasPokemons (name string) (LocationAreaPokemonResponse, error){
+func GetLocationAreasPokemons(name string) (LocationAreaPokemonResponse, error) {
 	baseURL := "https://pokeapi.co/api/v2/location-area/"
 	fullURL := baseURL + name
 
 	cacheResp, cacheExists := cache.Get(fullURL)
 
 	if cacheExists {
-	result := LocationResultStruct{}
-	er := json.Unmarshal(cacheResp, &result)
+		result := LocationResultStruct{}
+		er := json.Unmarshal(cacheResp, &result)
 
-	if er != nil {
-		fmt.Println(er)
+		if er != nil {
+			fmt.Println(er)
+		}
+		return LocationAreaPokemonResponse{}, er
 	}
-	return LocationAreaPokemonResponse{}, er
-	}
-
 
 	if len(name) <= 0 {
 		return LocationAreaPokemonResponse{}, errors.New("length of location cannot be zero")
@@ -88,13 +85,13 @@ return result, nil
 		fmt.Printf("Error status code : %v\n", res.StatusCode)
 		return LocationAreaPokemonResponse{}, err
 	}
-	
+
 	if err != nil {
 		fmt.Println(err)
 		return LocationAreaPokemonResponse{}, err
-	
+
 	}
-	
+
 	body, _ := io.ReadAll(res.Body)
 	defer res.Body.Close()
 
@@ -106,12 +103,12 @@ return result, nil
 	}
 
 	return result, nil
- }
+}
 
 type LocationResultStruct struct {
-	Count    int    `json:"count"`
+	Count    int     `json:"count"`
 	Next     *string `json:"next"`
-	Previous *string    `json:"previous"`
+	Previous *string `json:"previous"`
 	Results  []struct {
 		Name string `json:"name"`
 		URL  string `json:"url"`
